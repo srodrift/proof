@@ -1,5 +1,7 @@
 # Proof
 
+**Team Compound** — Sunny & Kaushik
+
 **AI agents are smart once and forgetful forever. Proof compounds what works — so the tenth run costs a fraction of the first.**
 
 A go-to-market workspace that figures out where to market a product, which copy resonates, and then **turns the winning procedure into a replayable play**. The second product does not re-derive the answer. It recalls it.

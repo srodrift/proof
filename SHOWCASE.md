@@ -1,6 +1,6 @@
 # Discord #showcase — paste this
 
-**Proof** — a GTM agent that gets cheaper the second time.
+**Team Compound** (Sunny & Kaushik) — **Proof**, a GTM agent that gets cheaper the second time.
 
 Most agents reason brilliantly once, then forget. You give Proof a product. It finds channels, tests copy on a labeled simulated ICP panel, and stores what worked. You can override it — *our founder got flamed on HN last year* — and that correction outranks the model on every later run. When a procedure works, Modiqo captures it as a deterministic play. The next product with the same ICP shape replays the play instead of starting from zero.
 
