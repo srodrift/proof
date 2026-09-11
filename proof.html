@@ -1,119 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Proof — a GTM agent that earns its playbook</title>
+<title>Proof — GTM that compounds</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#101A26; --ink-60:#5A6675; --ink-30:#96A0AC;
-  --paper:#ECEEF2; --panel:#FFFFFF; --line:#D6DAE1;
-  --win:#0B6E4F; --running:#B26B00; --dead:#8A2E2E;
-  --accent:#1B3FBF; --human:#6B3FA0;
-  --r:3px;
+  --ink:#14120f; --muted:#6b645b; --faint:#9a9288;
+  --paper:#efeae2; --panel:#f7f3ec; --white:#fffdf8;
+  --line:#ddd4c8; --line-strong:#c9bfb2;
+  --win:#1a6b4a; --win-soft:#e4f3eb;
+  --run:#b45309; --run-soft:#f8ead8;
+  --dead:#7a3d32; --dead-soft:#f4e8e4;
+  --human:#5c3d8a; --human-soft:#f1ebf7;
+  --accent:#1c3d2e;
+  --r:10px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
 body{
   background:var(--paper); color:var(--ink);
-  font-family:"Space Grotesk",system-ui,sans-serif;
-  font-size:14px; line-height:1.45;
+  font-family:"Instrument Sans",system-ui,sans-serif;
+  font-size:15px; line-height:1.45;
   display:flex; flex-direction:column;
 }
-button{font:inherit;color:inherit;cursor:pointer}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button,textarea,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-/* ---------- header / scoreboard ---------- */
-header{
-  background:var(--ink); color:#fff; padding:14px 20px;
-  display:flex; align-items:flex-end; gap:32px; flex-wrap:wrap;
+.top{
+  background:var(--ink); color:#f4efe6;
+  padding:14px 22px 16px;
+  display:grid; grid-template-columns:auto 1fr auto;
+  gap:28px; align-items:end;
 }
-.mark{font-weight:700;font-size:19px;letter-spacing:-.02em}
-.mark span{display:block;font-weight:400;font-size:12px;color:#8FA0B4;letter-spacing:0}
-.stats{display:flex;gap:28px;margin-left:auto;flex-wrap:wrap}
-.stat b{display:block;font-size:24px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
-.stat i{font-style:normal;font-size:11px;color:#8FA0B4}
-.stat.delta b{color:#5FD6A4}
+.brand{display:flex; align-items:baseline; gap:10px; min-width:180px}
+.brand b{font-size:22px; letter-spacing:-.03em}
+.brand em{font-style:normal; font-size:13px; color:#b7aea2}
+.phases{display:flex; gap:6px; flex-wrap:wrap; justify-content:center}
+.phase{
+  font-size:12px; letter-spacing:.04em; text-transform:uppercase;
+  color:#8d857a; padding:5px 10px; border-radius:999px; border:1px solid transparent;
+}
+.phase.on{color:#f4efe6; border-color:#4a453e; background:#221f1b}
+.phase.done{color:#9dcfb4}
+.stats{display:flex; gap:22px}
+.stat b{display:block; font-size:22px; font-weight:600; font-variant-numeric:tabular-nums; line-height:1}
+.stat i{font-style:normal; font-size:11px; color:#b7aea2}
+.stat.delta b{color:#8ee0b6}
 
-/* ---------- layout ---------- */
-main{flex:1;display:grid;grid-template-columns:280px 1fr 300px;gap:1px;background:var(--line);min-height:0}
-.col{background:var(--panel);overflow:auto;padding:16px;min-width:0}
-h2{font-size:12px;font-weight:600;margin:0 0 10px;color:var(--ink-60)}
-h3{font-size:14px;font-weight:600;margin:0 0 4px}
+.shell{
+  flex:1; min-height:0;
+  display:grid; grid-template-columns:300px minmax(0,1fr) 300px;
+  gap:1px; background:var(--line);
+}
+.col{background:var(--white); overflow:auto; padding:18px 18px 28px; min-width:0}
+.col.mid{background:var(--panel)}
+h2{
+  margin:0 0 12px; font-size:11px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+}
+h3{margin:0 0 4px; font-size:17px; letter-spacing:-.02em}
 
-/* ---------- knowledge ---------- */
-.know{border-left:3px solid var(--line);padding:7px 0 7px 9px;margin-bottom:8px}
-.know.agent{border-color:var(--accent)}
-.know.human{border-color:var(--human);background:#F7F3FB}
-.know p{margin:0;font-size:13px}
-.src{font-size:10.5px;color:var(--ink-30);margin-top:3px}
+.know{
+  border-radius:var(--r); padding:11px 12px; margin-bottom:8px;
+  border:1px solid var(--line); background:var(--white);
+}
+.know.agent{border-left:3px solid var(--accent)}
+.know.human{border-left:3px solid var(--human); background:var(--human-soft)}
+.know p{margin:0; font-size:13.5px}
+.src{margin-top:5px; font-size:11px; color:var(--faint)}
 .know.human .src{color:var(--human)}
+
+.composer{
+  margin-top:20px; padding:14px; border-radius:12px;
+  background:var(--human-soft); border:1px solid #d8cce8;
+}
+.composer h2{color:var(--human)}
+.composer p.hint{margin:0 0 10px; font-size:12.5px; color:var(--human)}
 textarea{
-  width:100%;border:1px solid var(--line);border-radius:var(--r);padding:8px;
-  font:inherit;font-size:13px;resize:vertical;min-height:64px;background:#fff
+  width:100%; min-height:78px; resize:vertical;
+  border:1px solid #c9b8de; border-radius:8px;
+  padding:10px 11px; background:#fffdfb;
+}
+.chip{
+  display:inline-block; margin:8px 0 0;
+  border:1px dashed #9b82c4; background:transparent;
+  color:var(--human); border-radius:999px;
+  padding:5px 10px; font-size:12px;
 }
 .btn{
-  background:var(--ink);color:#fff;border:0;border-radius:var(--r);
-  padding:8px 13px;font-size:13px;font-weight:500;width:100%;margin-top:7px
+  width:100%; margin-top:8px; border:0; border-radius:8px;
+  background:var(--ink); color:#f7f3ec;
+  padding:10px 14px; font-weight:600;
 }
-.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line-strong)}
+.btn.human{background:var(--human); color:#fff}
+.btn.win{background:var(--win); color:#fff}
+.btn:disabled{opacity:.38; cursor:not-allowed}
 
-/* ---------- experiment board ---------- */
-.product{border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;margin-bottom:14px}
-.product h3{font-size:15px}
-.product p{margin:2px 0 0;font-size:12.5px;color:var(--ink-60)}
-.lanes{display:flex;flex-direction:column;gap:8px}
+.product{
+  background:var(--white); border:1px solid var(--line);
+  border-radius:14px; padding:16px 18px; margin-bottom:16px;
+  display:flex; justify-content:space-between; gap:16px; align-items:flex-start;
+}
+.product p{margin:4px 0 0; color:var(--muted); font-size:13.5px}
+.pill{
+  flex:none; font-size:11px; letter-spacing:.04em; text-transform:uppercase;
+  padding:4px 8px; border-radius:999px; background:var(--paper); color:var(--muted);
+}
+.pill.live{background:var(--run-soft); color:var(--run)}
+.pill.replay{background:var(--win-soft); color:var(--win)}
+
+.lanes{display:flex; flex-direction:column; gap:10px}
 .lane{
-  border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;
-  display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:center
+  background:var(--white); border:1px solid var(--line);
+  border-radius:12px; padding:13px 14px;
+  display:flex; flex-direction:column; gap:4px;
+  transition:border-color .2s, background .2s;
 }
-.lane.win{border-color:var(--win);background:#F2F9F6}
-.lane.dead{border-color:var(--line);opacity:.62}
-.lane.running{border-color:var(--running)}
-.lane-name{font-weight:600}
-.lane-meta{font-size:12px;color:var(--ink-60);grid-column:1}
-.score{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;grid-row:1/3}
+.lane-head{display:flex; justify-content:space-between; align-items:baseline; gap:16px}
+.lane.running{border-color:#e0b57a; background:var(--run-soft)}
+.lane.win{border-color:#8fbfa4; background:var(--win-soft)}
+.lane.dead{opacity:.72}
+.lane.human{
+  border-color:#b79ad4; background:var(--human-soft);
+  box-shadow:0 0 0 3px rgba(92,61,138,.08);
+}
+.lane-name{font-weight:650; letter-spacing:-.01em}
+.lane-meta{font-size:13px; color:var(--muted)}
+.score{
+  font-size:28px; font-weight:650; font-variant-numeric:tabular-nums;
+  letter-spacing:-.03em; color:var(--faint); line-height:1;
+}
 .lane.win .score{color:var(--win)}
-.lane.dead .score{color:var(--ink-30)}
-.bar{grid-column:1/3;height:3px;background:var(--line);border-radius:2px;overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:var(--running);transition:width .5s linear}
+.lane.dead .score{color:var(--faint)}
+.lane.human .score{color:var(--human)}
+.lane.running .score{color:var(--run); font-size:18px}
+.bar{height:3px; background:var(--line); border-radius:99px; overflow:hidden; margin-top:6px}
+.bar i{display:block; height:100%; width:0; background:var(--run); transition:width .45s ease}
 .lane.win .bar i{background:var(--win)}
-.lane.dead .bar i{background:var(--ink-30)}
-.variant{font-size:12px;color:var(--ink-60);grid-column:1/3;padding-left:10px;border-left:2px solid var(--line)}
-.variant.best{color:var(--win);border-color:var(--win)}
-.db{font-size:10.5px;color:var(--ink-30);grid-column:1/3}
+.lane.dead .bar i{background:var(--line-strong)}
+.lane.human .bar i{background:var(--human)}
+.variants{display:flex; flex-direction:column; gap:6px; margin-top:8px}
+.variant{
+  display:flex; justify-content:space-between; gap:12px;
+  padding:7px 9px; border-radius:8px; background:var(--paper);
+  font-size:13px; color:var(--muted);
+}
+.variant.best{background:#dceee4; color:var(--win); font-weight:550}
+.db{margin-top:6px; font-size:11px; color:var(--faint); font-family:"IBM Plex Mono",monospace}
+.badge{
+  display:inline-block; margin-left:6px; font-size:10px; letter-spacing:.05em;
+  text-transform:uppercase; padding:2px 6px; border-radius:999px;
+  background:var(--human); color:#fff; vertical-align:middle;
+}
 
-/* ---------- play ---------- */
-.play{border:2px solid var(--win);border-radius:var(--r);padding:12px;margin-top:14px;background:#F2F9F6}
-.play ol{margin:8px 0 0;padding-left:18px;font-size:12.5px;color:var(--ink-60)}
-.play li{margin-bottom:3px}
+.play{
+  margin-top:16px; padding:16px; border-radius:14px;
+  background:var(--win-soft); border:1px solid #8fbfa4;
+}
+.play ol{margin:8px 0 0; padding-left:18px; color:var(--muted); font-size:13.5px}
+.play li{margin-bottom:4px}
 
-/* ---------- trace ---------- */
-.trace{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;line-height:1.6}
-.trace div{padding:3px 0;border-bottom:1px solid #F0F2F5;display:flex;gap:7px}
-.trace b{font-weight:600;min-width:74px}
-.t-cognee{color:#1B3FBF}.t-hydradb{color:#6B3FA0}.t-hotdata{color:#B26B00}
-.t-rocketride{color:#0B6E4F}.t-modiqo{color:#8A2E2E}.t-snyk{color:var(--ink-60)}
+.actions{margin-top:16px; display:flex; flex-direction:column; gap:8px}
+
+.cmp{
+  margin-top:18px; display:grid; grid-template-columns:1fr 1fr;
+  gap:1px; background:var(--line); border:1px solid var(--line);
+  border-radius:14px; overflow:hidden;
+}
+.cmp>div{background:var(--white); padding:16px}
+.cmp .after{background:#ecf6f0}
+.cmp h4{margin:0 0 10px; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.cmp dl{margin:0; display:grid; grid-template-columns:1fr auto; gap:7px 12px; font-size:14px}
+.cmp dt{color:var(--muted)}
+.cmp dd{margin:0; font-weight:650; font-variant-numeric:tabular-nums}
+.cmp .after dd{color:var(--win)}
+.note{
+  margin:10px 0 0; font-size:12px; color:var(--muted);
+  padding:10px 12px; background:var(--paper); border-radius:8px;
+}
+
+.trace{font-family:"IBM Plex Mono",monospace; font-size:11.5px; line-height:1.55}
+.trace div{
+  display:grid; grid-template-columns:86px 1fr; gap:8px;
+  padding:7px 0; border-bottom:1px solid var(--line);
+}
+.trace b{font-weight:500}
+.t-cognee{color:#1c4d9c}
+.t-hydradb{color:var(--human)}
+.t-hotdata{color:var(--run)}
+.t-rocketride{color:var(--win)}
+.t-modiqo{color:#8a2e2e}
+.t-snyk{color:var(--muted)}
 .t-human{color:var(--human)}
 
-/* ---------- compare ---------- */
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:14px}
-.cmp>div{background:#fff;padding:11px}
-.cmp h4{margin:0 0 7px;font-size:12px;color:var(--ink-60);font-weight:600}
-.cmp dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:13px}
-.cmp dt{color:var(--ink-60)}
-.cmp dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums}
-.cmp .better dd{color:var(--win)}
-.note{font-size:11.5px;color:var(--ink-60);margin-top:9px;padding:7px 9px;background:#F6F7F9;border-radius:var(--r)}
-@media(max-width:960px){main{grid-template-columns:1fr;overflow:auto}.col{max-height:none}}
-</style>
+.stack{margin-top:22px}
+.stack ul{list-style:none; margin:0; padding:0}
+.stack li{
+  display:flex; justify-content:space-between; gap:8px;
+  font-size:12.5px; padding:6px 0; border-bottom:1px solid var(--line);
+}
+.stack i{font-style:normal; color:var(--faint)}
 
-<header>
-  <div class="mark">Proof<span>a GTM agent that earns its playbook</span></div>
+@media (max-width:1080px){
+  .top{grid-template-columns:1fr; gap:14px}
+  .stats{flex-wrap:wrap}
+  .shell{grid-template-columns:1fr; overflow:auto}
+  .col{max-height:none}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><b>Proof</b><em>GTM that compounds</em></div>
+  <nav class="phases" aria-label="Run phases">
+    <span class="phase on" id="ph-explore">1 Explore</span>
+    <span class="phase" id="ph-correct">2 Correct</span>
+    <span class="phase" id="ph-capture">3 Capture</span>
+    <span class="phase" id="ph-replay">4 Replay</span>
+  </nav>
   <div class="stats">
-    <div class="stat"><b id="s-exp">0</b><i>experiments run</i></div>
+    <div class="stat"><b id="s-exp">0</b><i>experiments</i></div>
     <div class="stat"><b id="s-calls">0</b><i>model + tool calls</i></div>
     <div class="stat"><b id="s-time">0.0s</b><i>elapsed this run</i></div>
     <div class="stat"><b id="s-know">0</b><i>learnings stored</i></div>
@@ -121,253 +234,336 @@ textarea{
   </div>
 </header>
 
-<main>
-  <!-- LEFT: what we know -->
+<main class="shell">
   <section class="col">
     <h2>What we know</h2>
     <div id="knowledge"></div>
-    <h2 style="margin-top:18px">Tell it what you learned</h2>
-    <textarea id="humanInput" placeholder="e.g. our founder got flamed on HN last year — we have no standing there"></textarea>
-    <button class="btn" id="addKnow">Add to context</button>
-    <p class="src" style="margin-top:7px">Human context outranks agent inference and is re-applied on every later run.</p>
+    <div class="composer">
+      <h2>You know something it doesn’t</h2>
+      <p class="hint">Human context outranks the agent and is replayed on every later product.</p>
+      <textarea id="humanInput" placeholder="What did you learn that the model can’t see?"></textarea>
+      <button class="chip" id="suggest" type="button">Use the Hacker News correction</button>
+      <button class="btn human" id="addKnow" type="button">Add to context</button>
+    </div>
   </section>
 
-  <!-- CENTER: experiments -->
-  <section class="col">
+  <section class="col mid">
     <div class="product">
-      <h3 id="p-name">Relay — webhook debugging for backend engineers</h3>
-      <p id="p-desc">Replay a failed webhook against your staging endpoint without redeploying.</p>
+      <div>
+        <h3 id="p-name">Relay — webhook debugging for backend engineers</h3>
+        <p id="p-desc">Replay a failed webhook against your staging endpoint without redeploying.</p>
+      </div>
+      <span class="pill" id="p-pill">Product 1 · exploring</span>
     </div>
     <h2>Channel experiments</h2>
     <div class="lanes" id="lanes"></div>
     <div id="playSlot"></div>
-    <button class="btn" id="run" style="margin-top:14px">Run experiments</button>
-    <button class="btn ghost" id="run2" style="margin-top:7px" disabled>New product — Ledgerline (reconciliation API)</button>
+    <div class="actions">
+      <button class="btn" id="run" type="button">Run experiments</button>
+      <button class="btn ghost" id="run2" type="button" disabled>Replay on Ledgerline</button>
+    </div>
     <div id="cmpSlot"></div>
   </section>
 
-  <!-- RIGHT: trace -->
   <section class="col">
     <h2>Activity</h2>
     <div class="trace" id="trace"></div>
+    <div class="stack">
+      <h2>Stack</h2>
+      <ul>
+        <li>Cognee<i>structure</i></li>
+        <li>HydraDB<i>durable graph</i></li>
+        <li>Hotdata<i>isolated DBs</i></li>
+        <li>RocketRide<i>agent</i></li>
+        <li>Modiqo<i>muscle memory</i></li>
+        <li>Snyk<i>scan</i></li>
+      </ul>
+    </div>
   </section>
 </main>
 
 <script>
-/* =========================================================================
-   SPONSOR ADAPTERS — swap the body of each for the real SDK call.
-   Every call is counted and timed, so the scoreboard reports measured
-   numbers, not hardcoded ones. Keep the counter line when you go live.
-   ========================================================================= */
-let CALLS = 0, T0 = 0;
-const LIVE = false;                       // flip true once keys are in .env
+const LIVE = false;
+let CALLS = 0, T0 = 0, phase = 1, busy = false;
+const knowledge = [
+  {t:'Product is a developer tool sold bottom-up, not to a buying committee.', s:'agent · Cognee extraction', k:'agent'},
+  {t:'ICP: backend and platform engineers at Series A–C SaaS companies.', s:'agent · Cognee extraction', k:'agent'}
+];
+let plays = [], run1 = null, run2 = null, laneStates = [0,0,0,0];
 
+const CHANNELS_A = [
+  {n:'r/webdev', fit:41, why:'High volume, low buying intent — mostly students and freelancers',
+   db:'hotdata_exp_01', variants:[
+     {c:'Stop guessing why your webhook failed', s:44},
+     {c:'Ship faster with better tooling', s:22}]},
+  {n:'Hacker News', fit:78, why:'ICP is present and active; launch posts punish weak founder standing',
+   db:'hotdata_exp_02', variants:[
+     {c:'Replay a failed webhook without redeploying', s:81},
+     {c:'The webhook debugger we wanted', s:58}]},
+  {n:'Platform eng Discords', fit:83, why:'Exact ICP, high trust, slow but compounding',
+   db:'hotdata_exp_03', variants:[
+     {c:'Replay a failed webhook against staging — no redeploy', s:86},
+     {c:'Webhook observability for platform teams', s:61}]},
+  {n:'LinkedIn', fit:29, why:'Reaches managers, not the engineer who adopts the tool',
+   db:'hotdata_exp_04', variants:[
+     {c:'Cut incident response time by 40%', s:31},
+     {c:'Modern webhook infrastructure', s:18}]}
+];
+const CHANNELS_B = [
+  {n:'Platform eng Discords', fit:80, why:'Play matched ICP shape — dev tool, bottom-up, backend buyer',
+   db:'hotdata_exp_05', variants:[{c:'Reconcile a failed settlement without a manual export', s:84}]},
+  {n:'Hacker News', fit:72, why:'Same ICP shape; founder-standing caveat re-applied from stored context',
+   db:'hotdata_exp_06', variants:[{c:'Reconciliation that explains its own mismatches', s:74}]},
+  {n:'LinkedIn', fit:27, why:'Excluded by stored learning — reaches managers, not adopters',
+   db:'hotdata_exp_07', variants:[]}
+];
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function channels(){ return phase === 1 ? CHANNELS_A : CHANNELS_B; }
+function setPhase(id){
+  for (const el of document.querySelectorAll('.phase')) el.classList.remove('on');
+  const map = {1:'ph-explore',2:'ph-correct',3:'ph-capture',4:'ph-replay'};
+  if (id >= 2) document.getElementById('ph-explore').classList.add('done');
+  if (id >= 3) document.getElementById('ph-correct').classList.add('done');
+  if (id >= 4) document.getElementById('ph-capture').classList.add('done');
+  document.getElementById(map[id]).classList.add('on');
+}
 function log(tool, msg){
   const d = document.createElement('div');
-  d.innerHTML = `<b class="t-${tool.toLowerCase()}">${tool}</b><span>${msg}</span>`;
-  const t = document.getElementById('trace');
-  t.prepend(d);
+  d.innerHTML = `<b class="t-${tool.toLowerCase()}">${esc(tool)}</b><span>${esc(msg)}</span>`;
+  document.getElementById('trace').prepend(d);
 }
-async function call(tool, msg, payload, ms=260){
+async function call(tool, msg, payload, ms=240){
   CALLS++; log(tool, msg); paint();
-  if (LIVE) return await realCall(tool, payload);   // <-- wire here
-  await new Promise(r=>setTimeout(r, ms));
+  if (LIVE) return await realCall(tool, payload);
+  await new Promise(r => setTimeout(r, ms));
   return payload;
 }
 async function realCall(tool, payload){
   const routes = {
-    COGNEE:     '/api/cognee/cognify',      // extract entities + relationships
-    HYDRADB:    '/api/hydradb/upsert',      // persist product→ICP→channel graph
-    HOTDATA:    '/api/hotdata/query',       // per-experiment isolated DB
-    ROCKETRIDE: '/api/rocketride/run',      // orchestrate the pipeline (.pipe)
-    MODIQO:     '/api/modiqo/play',         // capture / replay deterministic play
-    SNYK:       '/api/snyk/scan'
+    COGNEE:'/api/cognee/cognify',
+    HYDRADB:'/api/hydradb/upsert',
+    HOTDATA:'/api/hotdata/query',
+    ROCKETRIDE:'/api/rocketride/run',
+    MODIQO:'/api/modiqo/play',
+    SNYK:'/api/snyk/scan'
   };
   const r = await fetch(routes[tool], {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)
   });
-  if(!r.ok) throw new Error(`${tool} ${r.status}`);
+  if (!r.ok) throw new Error(`${tool} ${r.status}`);
   return r.json();
 }
 
-/* ---------------- state ---------------- */
-const knowledge = [
-  {t:'Product is a developer tool sold bottom-up, not to a buying committee.', s:'agent · Cognee extraction', k:'agent'},
-  {t:'ICP: backend and platform engineers at Series A–C SaaS companies.',      s:'agent · Cognee extraction', k:'agent'}
-];
-let plays = [], run1 = null, run2 = null, phase = 1;
-
-const CHANNELS_A = [
-  {n:'r/webdev',           fit:41, why:'high volume, low buying intent — mostly students and freelancers',
-   db:'hotdata_exp_01', variants:[
-     {c:'Stop guessing why your webhook failed', s:44},
-     {c:'Ship faster with better tooling',       s:22}]},
-  {n:'Hacker News',        fit:78, why:'ICP present and active; launch posts punish weak founder standing',
-   db:'hotdata_exp_02', variants:[
-     {c:'Replay a failed webhook without redeploying', s:81},
-     {c:'The webhook debugger we wanted',              s:58}]},
-  {n:'Platform eng Discords', fit:83, why:'exact ICP, high trust, slow but compounding',
-   db:'hotdata_exp_03', variants:[
-     {c:'Replay a failed webhook against staging — no redeploy', s:86},
-     {c:'Webhook observability for platform teams',              s:61}]},
-  {n:'LinkedIn',           fit:29, why:'reaches managers, not the engineer who adopts the tool',
-   db:'hotdata_exp_04', variants:[
-     {c:'Cut incident response time by 40%', s:31},
-     {c:'Modern webhook infrastructure',     s:18}]}
-];
-const CHANNELS_B = [
-  {n:'Platform eng Discords', fit:80, why:'play matched ICP shape — dev tool, bottom-up, backend buyer',
-   db:'hotdata_exp_05', variants:[{c:'Reconcile a failed settlement without a manual export', s:84}]},
-  {n:'Hacker News',        fit:72, why:'same ICP shape; founder-standing caveat re-applied from stored context',
-   db:'hotdata_exp_06', variants:[{c:'Reconciliation that explains its own mismatches', s:74}]},
-  {n:'LinkedIn',           fit:27, why:'excluded by stored learning — reaches managers, not adopters',
-   db:'hotdata_exp_07', variants:[]}
-];
-
-/* ---------------- render ---------------- */
 function paint(){
   document.getElementById('s-calls').textContent = CALLS;
-  document.getElementById('s-know').textContent  = knowledge.length;
-  document.getElementById('s-time').textContent  =
-    T0 ? ((performance.now()-T0)/1000).toFixed(1)+'s' : '0.0s';
+  document.getElementById('s-know').textContent = knowledge.length;
+  document.getElementById('s-time').textContent = T0 ? ((performance.now()-T0)/1000).toFixed(1)+'s' : '0.0s';
 }
 function paintKnowledge(){
-  document.getElementById('knowledge').innerHTML = knowledge.map(k=>
-    `<div class="know ${k.k}"><p>${k.t}</p><div class="src">${k.s}</div></div>`).join('');
+  document.getElementById('knowledge').innerHTML = knowledge.map(k =>
+    `<div class="know ${k.k}"><p>${esc(k.t)}</p><div class="src">${esc(k.s)}</div></div>`
+  ).join('');
   paint();
 }
 function laneHTML(c, pct, state){
-  const best = c.variants.length ? Math.max(...c.variants.map(v=>v.s)) : null;
-  return `<div class="lane ${state}">
-    <div class="lane-name">${c.n}</div>
-    <div class="score">${state==='running'?'··':c.fit}</div>
-    <div class="lane-meta">${state==='running'?'testing variants…':c.why}</div>
+  const done = state === 2;
+  const running = state === 1;
+  const klass = [
+    running ? 'running' : '',
+    done && c.human ? 'human' : '',
+    done && !c.human && c.fit >= 70 ? 'win' : '',
+    done && !c.human && c.fit < 70 ? 'dead' : ''
+  ].filter(Boolean).join(' ');
+  const best = c.variants.length ? Math.max(...c.variants.map(v => v.s)) : null;
+  const score = running ? '··' : done ? c.fit : '—';
+  const meta = running ? 'Scoring copy against a simulated ICP panel…'
+    : done ? c.why
+    : 'Queued — scores stay hidden until this lane finishes.';
+  return `<article class="lane ${klass}">
+    <div class="lane-head">
+      <div class="lane-name">${esc(c.n)}${c.human && done ? '<span class="badge">your call</span>' : ''}</div>
+      <div class="score">${score}</div>
+    </div>
+    <div class="lane-meta">${esc(meta)}</div>
     <div class="bar"><i style="width:${pct}%"></i></div>
-    ${state==='running'?'':c.variants.map(v=>
-      `<div class="variant ${v.s===best?'best':''}">${v.c} — panel score ${v.s}</div>`).join('')}
-    ${c.variants.length?`<div class="db">isolated database ${c.db} · 3 personas scored in parallel</div>`:''}
-  </div>`;
+    ${done && c.variants.length ? `<div class="variants">${c.variants.map(v =>
+      `<div class="variant ${v.s===best?'best':''}"><span>${esc(v.c)}</span><b>${v.s}</b></div>`
+    ).join('')}</div>` : ''}
+    ${done && c.variants.length ? `<div class="db">${esc(c.db)} · 3 personas, isolated database</div>` : ''}
+  </article>`;
 }
 function drawLanes(list, states){
-  document.getElementById('lanes').innerHTML =
-    list.map((c,i)=>laneHTML(c, states[i]===2?100:states[i]===1?60:0,
-      states[i]!==2 ? (states[i]===1?'running':'') : (c.fit>=70?'win':'dead'))).join('');
+  const ordered = list.map((c,i) => ({c, i, st: states[i] ?? 0}));
+  if (ordered.every(x => x.st === 2)) ordered.sort((a,b) => b.c.fit - a.c.fit);
+  document.getElementById('lanes').innerHTML = ordered.map(({c,st}) =>
+    laneHTML(c, st===2?100:st===1?58:0, st)
+  ).join('');
 }
 
-/* ---------------- run 1 ---------------- */
+function applyHuman(txt){
+  const hit = /hn|hacker news|flame|standing/i.test(txt);
+  if (!hit) return false;
+  for (const list of [CHANNELS_A, CHANNELS_B]){
+    const hn = list.find(c => c.n === 'Hacker News');
+    if (!hn) continue;
+    hn.fit = list === CHANNELS_A ? 46 : 34;
+    hn.why = 'Downgraded — no founder standing in this community (your context).';
+    hn.human = true;
+  }
+  return true;
+}
+
+document.getElementById('suggest').onclick = () => {
+  document.getElementById('humanInput').value =
+    'Our founder got flamed on HN last year — we have no standing there.';
+  document.getElementById('humanInput').focus();
+};
+
+document.getElementById('addKnow').onclick = async () => {
+  const el = document.getElementById('humanInput');
+  const txt = el.value.trim();
+  if (!txt) return;
+  el.value = '';
+  knowledge.push({t:txt, s:'you · outranks agent inference', k:'human'});
+  paintKnowledge();
+  setPhase(2);
+  log('HUMAN', 'context added — re-ranking');
+  await call('COGNEE','reconcile human context against stored inference',{text:txt});
+  await call('HYDRADB','human context outranks agent inference · persist',{nodes:[{type:'human', text:txt}]});
+  if (applyHuman(txt)){
+    drawLanes(channels(), laneStates);
+  }
+};
+
 document.getElementById('run').onclick = async () => {
-  const b = document.getElementById('run'); b.disabled = true; b.textContent = 'Running…';
-  CALLS = 0; T0 = performance.now();
-  const tick = setInterval(paint, 100);
+  if (busy) return;
+  busy = true;
+  const b = document.getElementById('run');
+  b.disabled = true; b.textContent = 'Exploring…';
+  CALLS = 0; T0 = performance.now(); phase = 1;
+  setPhase(1);
+  document.getElementById('p-pill').textContent = 'Product 1 · exploring';
+  document.getElementById('p-pill').className = 'pill live';
+  const tick = setInterval(paint, 80);
 
   await call('ROCKETRIDE','pipeline start · gtm_discovery.pipe',{});
   await call('COGNEE','extract product → ICP → channel hypotheses',{});
   await call('HYDRADB','persist product graph · 2 entities, 4 edges',{});
 
-  const st = [0,0,0,0];
+  laneStates = [0,0,0,0];
   for (let i=0;i<CHANNELS_A.length;i++){
-    st[i]=1; drawLanes(CHANNELS_A, st);
-    await call('HOTDATA',`spin up ${CHANNELS_A[i].db} · score ${CHANNELS_A[i].variants.length} variants`,{},300);
+    laneStates[i] = 1; drawLanes(CHANNELS_A, laneStates);
+    await call('HOTDATA',`spin up ${CHANNELS_A[i].db} · score ${CHANNELS_A[i].variants.length} variants`,{db:CHANNELS_A[i].db},300);
     await call('ROCKETRIDE',`panel of 3 ICP personas · ${CHANNELS_A[i].n}`,{},240);
-    st[i]=2; drawLanes(CHANNELS_A, st);
-    document.getElementById('s-exp').textContent = i+1;
+    laneStates[i] = 2; drawLanes(CHANNELS_A, laneStates);
+    document.getElementById('s-exp').textContent = String(i+1);
   }
-  await call('COGNEE','structure outcome → learning',{});
+
   knowledge.push(
     {t:'Failure-mode specificity outperforms outcome claims by roughly 2× with this ICP.',
      s:'agent · derived from 7 scored variants', k:'agent'},
-    {t:'LinkedIn reaches managers, not the engineer who adopts the tool. Deprioritise.',
-     s:'agent · derived from experiment 04', k:'agent'});
+    {t:'LinkedIn reaches managers, not the engineer who adopts the tool. Deprioritize.',
+     s:'agent · derived from experiment 04', k:'agent'}
+  );
   paintKnowledge();
-  await call('HYDRADB','store learnings against ICP shape "bottom-up dev tool"',{});
+  await call('COGNEE','structure outcome → learning',{});
+  await call('HYDRADB','store learnings against ICP shape “bottom-up dev tool”',{});
 
   document.getElementById('playSlot').innerHTML = `<div class="play">
     <h3>Candidate play: dev-tool channel qualification v1</h3>
     <ol>
-      <li>Extract ICP shape and adoption motion from product description</li>
+      <li>Extract ICP shape and adoption motion from the product</li>
       <li>Shortlist channels where that ICP is the primary population</li>
       <li>Generate variants on failure-mode specificity, not outcome claims</li>
       <li>Score each variant in an isolated database, in parallel</li>
       <li>Apply stored human context before ranking</li>
     </ol>
-    <button class="btn" id="promote" style="margin-top:9px">Promote to Modiqo play</button></div>`;
+    <button class="btn win" id="promote" type="button">Promote to Modiqo play</button>
+  </div>`;
   document.getElementById('promote').onclick = promote;
 
   clearInterval(tick); paint();
-  run1 = {calls:CALLS, secs:(performance.now()-T0)/1000, docs:4, top:'Platform eng Discords'};
-  b.textContent = 'Run experiments'; b.disabled = false;
+  run1 = {calls:CALLS, secs:(performance.now()-T0)/1000, top:'Platform eng Discords'};
+  b.textContent = 'Run experiments';
+  b.disabled = false;
+  document.getElementById('p-pill').textContent = 'Product 1 · ranked';
+  document.getElementById('p-pill').className = 'pill';
+  busy = false;
 };
 
-/* ---------------- promote ---------------- */
 async function promote(){
-  const btn = document.getElementById('promote'); btn.disabled = true;
-  await call('MODIQO','capture procedure · 5 steps, 0 free-form reasoning',{});
+  const btn = document.getElementById('promote');
+  btn.disabled = true;
+  setPhase(3);
+  await call('MODIQO','capture procedure · 5 steps, 0 free-form reasoning',{action:'capture'});
   await call('SNYK','scan dependencies + application code',{},400);
-  await call('MODIQO','play published · dev_tool_channel_qualification_v1',{});
+  await call('MODIQO','play published · dev_tool_channel_qualification_v1',{action:'capture'});
   plays.push('dev_tool_channel_qualification_v1');
   btn.textContent = 'Play saved — deterministic, replayable';
   document.getElementById('run2').disabled = false;
 }
 
-/* ---------------- run 2 ---------------- */
 document.getElementById('run2').onclick = async () => {
-  const b = document.getElementById('run2'); b.disabled = true; b.textContent = 'Replaying play…';
+  if (busy) return;
+  busy = true;
+  const b = document.getElementById('run2');
+  b.disabled = true; b.textContent = 'Replaying play…';
   phase = 2; CALLS = 0; T0 = performance.now();
-  const tick = setInterval(paint, 100);
-
+  setPhase(4);
   document.getElementById('p-name').textContent = 'Ledgerline — reconciliation API for fintech backends';
   document.getElementById('p-desc').textContent = 'Match settlements against ledger entries and explain every mismatch.';
+  document.getElementById('p-pill').textContent = 'Product 2 · replaying';
+  document.getElementById('p-pill').className = 'pill replay';
+  const tick = setInterval(paint, 80);
 
-  await call('MODIQO','replay dev_tool_channel_qualification_v1',{});
+  await call('MODIQO','replay dev_tool_channel_qualification_v1',{action:'replay'});
   await call('HYDRADB','ICP shape matched — reuse stored channel ranking',{});
-  const st=[0,0,0];
+  laneStates = [0,0,0];
   for (let i=0;i<CHANNELS_B.length;i++){
-    st[i]=1; drawLanes(CHANNELS_B, st);
-    if (CHANNELS_B[i].variants.length)
-      await call('HOTDATA',`${CHANNELS_B[i].db} · score ${CHANNELS_B[i].variants.length} variant`,{},200);
-    st[i]=2; drawLanes(CHANNELS_B, st);
+    laneStates[i] = 1; drawLanes(CHANNELS_B, laneStates);
+    if (CHANNELS_B[i].variants.length){
+      await call('HOTDATA',`${CHANNELS_B[i].db} · score ${CHANNELS_B[i].variants.length} variant`,{db:CHANNELS_B[i].db},200);
+    }
+    laneStates[i] = 2; drawLanes(CHANNELS_B, laneStates);
+    document.getElementById('s-exp').textContent = String(i+1);
   }
   clearInterval(tick); paint();
-  run2 = {calls:CALLS, secs:(performance.now()-T0)/1000, docs:0, top:'Platform eng Discords'};
-
+  run2 = {calls:CALLS, secs:(performance.now()-T0)/1000, top:'Platform eng Discords'};
   const pc = Math.round((1 - run2.calls/run1.calls)*100);
-  document.getElementById('s-delta').textContent = pc+'% fewer calls';
+  document.getElementById('s-delta').textContent = pc + '% fewer calls';
   document.getElementById('cmpSlot').innerHTML = `<div class="cmp">
-    <div><h4>Run 1 — Relay, no prior knowledge</h4><dl>
-      <dt>Tool + model calls</dt><dd>${run1.calls}</dd>
-      <dt>Time to ranking</dt><dd>${run1.secs.toFixed(1)}s</dd>
-      <dt>Channels tested</dt><dd>4</dd>
-      <dt>Top channel</dt><dd>${run1.top}</dd></dl></div>
-    <div class="better"><h4>Run 2 — Ledgerline, play replayed</h4><dl>
-      <dt>Tool + model calls</dt><dd>${run2.calls}</dd>
-      <dt>Time to ranking</dt><dd>${run2.secs.toFixed(1)}s</dd>
-      <dt>Channels tested</dt><dd>3</dd>
-      <dt>Top channel</dt><dd>${run2.top}</dd></dl></div></div>
-    <p class="note">Variant scores come from a simulated panel of ICP personas, not a live
-    channel. Channel populations are drawn from real public activity. Counts and timings above
-    are measured from this session, not stored values.</p>`;
+    <div>
+      <h4>Run 1 — Relay, from scratch</h4>
+      <dl>
+        <dt>Tool + model calls</dt><dd>${run1.calls}</dd>
+        <dt>Time to ranking</dt><dd>${run1.secs.toFixed(1)}s</dd>
+        <dt>Channels tested</dt><dd>4</dd>
+        <dt>Top channel</dt><dd>${esc(run1.top)}</dd>
+      </dl>
+    </div>
+    <div class="after">
+      <h4>Run 2 — Ledgerline, play replayed</h4>
+      <dl>
+        <dt>Tool + model calls</dt><dd>${run2.calls}</dd>
+        <dt>Time to ranking</dt><dd>${run2.secs.toFixed(1)}s</dd>
+        <dt>Channels tested</dt><dd>3</dd>
+        <dt>Top channel</dt><dd>${esc(run2.top)}</dd>
+      </dl>
+    </div>
+  </div>
+  <p class="note">Variant scores come from a simulated panel of ICP personas, not a live channel. Channel populations are drawn from real public activity. Counts and timings are measured from this session.</p>`;
   b.textContent = 'Replayed';
+  document.getElementById('p-pill').textContent = 'Product 2 · cheaper';
+  busy = false;
 };
 
-/* ---------------- human context ---------------- */
-document.getElementById('addKnow').onclick = async () => {
-  const el = document.getElementById('humanInput');
-  const txt = el.value.trim(); if(!txt) return;
-  el.value = '';
-  knowledge.push({t:txt, s:'you · added mid-run', k:'human'});
-  paintKnowledge();
-  log('HUMAN','context added — re-ranking');
-  await call('COGNEE','reconcile human context against stored inference',{});
-  await call('HYDRADB','human context outranks agent inference · re-rank',{});
-  const hn = (phase===1?CHANNELS_A:CHANNELS_B).find(c=>c.n==='Hacker News');
-  if (hn && /hn|hacker news|flame/i.test(txt)){
-    hn.fit = 46; hn.why = 'downgraded — no founder standing in this community (your context)';
-    drawLanes(phase===1?CHANNELS_A:CHANNELS_B,
-      (phase===1?CHANNELS_A:CHANNELS_B).map(()=>2));
-  }
-};
-
-drawLanes(CHANNELS_A,[0,0,0,0]); paintKnowledge();
+drawLanes(CHANNELS_A, [0,0,0,0]);
+paintKnowledge();
 log('SNYK','baseline scan queued');
 </script>
+</body>
+</html>

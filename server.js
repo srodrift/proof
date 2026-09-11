@@ -9,6 +9,7 @@ import 'dotenv/config';
 const app = express();
 app.use(express.json({ limit: '2mb' }));
 app.use(express.static('.'));            // serves proof.html
+app.get('/', (_req, res) => res.redirect('/proof.html'));
 
 // --------------------------------------------------------------------------
 // helper: one place for auth + errors + the live/stub switch
