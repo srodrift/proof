@@ -1,0 +1,2016 @@
+{
+  "webhook": {
+    "actions": 0,
+    "capabilities": 2560,
+    "classType": [
+      "source"
+    ],
+    "description": "A source component that listens for incoming HTTP requests and accepts \nuploaded documents or data from external systems or processes. It enables \nseamless integration for document ingestion, allowing external systems to \ntrigger the component and send files for further processing. Configurable \nwith endpoint and authentication settings, it ensures secure and reliable \ndocument transfer for pipeline processing. Ideal for receiving documents, \nimages, or other files from external platforms via HTTP-based communication.",
+    "documentation": "https://docs.rocketride.org",
+    "lanes": {
+      "_source": [
+        "tags",
+        "text",
+        "json",
+        "audio",
+        "video",
+        "image",
+        "questions"
+      ]
+    },
+    "Pipe": {
+      "schema": {
+        "properties": {
+          "hideForm": {
+            "default": true,
+            "type": "boolean"
+          },
+          "mode": {
+            "default": "Source",
+            "type": "string"
+          },
+          "parameters": {
+            "object": "parameters",
+            "type": "object"
+          },
+          "type": {
+            "default": "webhook",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hideForm",
+          "type",
+          "mode"
+        ],
+        "title": "Webhook",
+        "type": "object"
+      },
+      "ui": {
+        "hideForm": {
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "mode": {
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "parameters": {
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          }
+        },
+        "type": {
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "ui:order": [
+          "hideForm",
+          "type",
+          "mode",
+          "parameters"
+        ]
+      }
+    },
+    "plans": null,
+    "prefix": "WebHook",
+    "protocol": "webhook://",
+    "tile": [],
+    "title": "Webhook"
+  },
+  "agent_rocketride": {
+    "actions": 0,
+    "capabilities": 68608,
+    "classType": [
+      "agent",
+      "tool"
+    ],
+    "description": "Wave-planning agent built natively on the RocketRide architecture.\nPlans each step as a wave of parallel tool calls, uses keyed memory to stay token-efficient,\nand requests tool schemas on demand instead of loading them all upfront.\nCan be invoked as a tool (`<nodeId>.run_agent`) for hierarchical agent orchestration.",
+    "documentation": "https://docs.rocketride.org",
+    "invoke": {
+      "llm": {
+        "description": "LLM used by the agent for planning and synthesis",
+        "max": 1,
+        "min": 1
+      },
+      "memory": {
+        "description": "Keyed memory for the agent (via control-plane invoke)",
+        "max": 1,
+        "min": 1
+      },
+      "tool": {
+        "description": "Tools available to the agent (via control-plane invoke)",
+        "min": 0
+      }
+    },
+    "lanes": {
+      "questions": [
+        "answers"
+      ]
+    },
+    "Pipe": {
+      "schema": {
+        "properties": {
+          "agent_description": {
+            "default": "",
+            "description": "What does this agent do? Describe its purpose and capabilities, this helps parent agents select and invoke it correctly.",
+            "title": "Agent description",
+            "type": "string"
+          },
+          "instructions": {
+            "description": "Additional instructions to guide the agent's planning and responses.",
+            "items": {
+              "format": "textarea",
+              "type": "string"
+            },
+            "title": "Instructions",
+            "type": "array"
+          },
+          "max_waves": {
+            "default": 10,
+            "description": "Maximum number of planning iterations before the synthesis fallback fires.",
+            "maximum": 50,
+            "minimum": 1,
+            "title": "Max Waves",
+            "type": "integer"
+          },
+          "require_tool_call": {
+            "default": false,
+            "description": "Require the agent to invoke at least one tool before answering. When on, a run that answers without calling any tool fails with a guard error. Use for determinism-critical pipelines where an ungrounded or narrated answer must never be delivered. Off by default.",
+            "title": "Require tool call",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "instructions",
+          "max_waves",
+          "require_tool_call"
+        ],
+        "title": "RocketRide Wave",
+        "type": "object"
+      },
+      "ui": {
+        "agent_description": {
+          "ui:widget": "textarea"
+        },
+        "instructions": {},
+        "max_waves": {},
+        "require_tool_call": {},
+        "ui:order": [
+          "agent_description",
+          "instructions",
+          "max_waves",
+          "require_tool_call"
+        ]
+      }
+    },
+    "plans": null,
+    "prefix": "agent",
+    "protocol": "agent_rocketride://",
+    "title": "RocketRide Wave"
+  },
+  "llm_anthropic": {
+    "actions": 0,
+    "capabilities": 3072,
+    "classType": [
+      "llm"
+    ],
+    "description": "A component that integrates with Anthropic's Claude models for natural \nlanguage understanding and generation. It enables tasks such as \nsummarization, question answering, content generation, and conversational \nAI. Configurable with model selection and prompt settings, the component \nprovides access to Claude's advanced language capabilities with a strong focus \non safety, alignment, and reliability. Ideal for enterprise-grade workflows requiring \ntrustworthy AI outputs.",
+    "documentation": "https://docs.rocketride.org",
+    "lanes": {
+      "questions": [
+        "answers"
+      ]
+    },
+    "Pipe": {
+      "schema": {
+        "dependencies": {
+          "profile": {
+            "oneOf": [
+              {
+                "properties": {
+                  "custom": {
+                    "object": "custom",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "model": {
+                        "description": "Anthropic model",
+                        "title": "Model",
+                        "type": "string"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      },
+                      "modelTotalTokens": {
+                        "description": "Total Tokens",
+                        "title": "Tokens",
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "model",
+                      "modelTotalTokens",
+                      "apikey"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "custom"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-sonnet-4-6": {
+                    "object": "claude-sonnet-4-6",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-sonnet-4-6"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-4-6": {
+                    "object": "claude-opus-4-6",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-4-6"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-haiku-4-5": {
+                    "object": "claude-haiku-4-5",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-haiku-4-5"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-sonnet-4-5": {
+                    "object": "claude-sonnet-4-5",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-sonnet-4-5"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-4-5": {
+                    "object": "claude-opus-4-5",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-4-5"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-4-7": {
+                    "object": "claude-opus-4-7",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-4-7"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-3-haiku": {
+                    "object": "claude-3-haiku",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-3-haiku"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-fable-5": {
+                    "object": "claude-fable-5",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-fable-5"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-fable-latest": {
+                    "object": "claude-fable-latest",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-fable-latest"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-haiku-latest": {
+                    "object": "claude-haiku-latest",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-haiku-latest"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-4": {
+                    "object": "claude-opus-4",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-4"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-4-1": {
+                    "object": "claude-opus-4-1",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-4-1"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-4-7-fast": {
+                    "object": "claude-opus-4-7-fast",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-4-7-fast"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-4-8": {
+                    "object": "claude-opus-4-8",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-4-8"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-4-8-fast": {
+                    "object": "claude-opus-4-8-fast",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-4-8-fast"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-latest": {
+                    "object": "claude-opus-latest",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-latest"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-sonnet-4": {
+                    "object": "claude-sonnet-4",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-sonnet-4"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-sonnet-5": {
+                    "object": "claude-sonnet-5",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-sonnet-5"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-sonnet-latest": {
+                    "object": "claude-sonnet-latest",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-sonnet-latest"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-5": {
+                    "object": "claude-opus-5",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-5"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "claude-opus-5-fast": {
+                    "object": "claude-opus-5-fast",
+                    "properties": {
+                      "apikey": {
+                        "description": "Enter your API key or token",
+                        "title": "API key (Token)",
+                        "type": "string"
+                      },
+                      "extendedThinking": {
+                        "default": false,
+                        "description": "Enable Anthropic extended thinking (reasoning) for this node. Off by default. Applies to reasoning-capable models on the interactive chat path.",
+                        "title": "Extended thinking",
+                        "type": "boolean"
+                      },
+                      "modelSource": {
+                        "title": "Model source",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "apikey",
+                      "extendedThinking"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "claude-opus-5-fast"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "properties": {
+          "profile": {
+            "default": "claude-sonnet-4-6",
+            "description": "LLM model",
+            "enum": [
+              "claude-3-haiku",
+              "claude-fable-5",
+              "claude-fable-latest",
+              "claude-haiku-4-5",
+              "claude-haiku-latest",
+              "claude-opus-4",
+              "claude-opus-4-1",
+              "claude-opus-4-5",
+              "claude-opus-4-6",
+              "claude-opus-4-7",
+              "claude-opus-4-7-fast",
+              "claude-opus-4-8",
+              "claude-opus-4-8-fast",
+              "claude-opus-5",
+              "claude-opus-5-fast",
+              "claude-opus-latest",
+              "claude-sonnet-4",
+              "claude-sonnet-4-5",
+              "claude-sonnet-4-6",
+              "claude-sonnet-5",
+              "claude-sonnet-latest",
+              "custom"
+            ],
+            "title": "Model",
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile"
+        ],
+        "title": "Anthropic",
+        "type": "object"
+      },
+      "ui": {
+        "claude-3-haiku": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "modelSource"
+          ]
+        },
+        "claude-fable-5": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-fable-latest": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-haiku-4-5": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-haiku-latest": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-4": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-4-1": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-4-5": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-4-6": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-4-7": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-4-7-fast": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-4-8": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-4-8-fast": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-5": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-5-fast": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-opus-latest": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-sonnet-4": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-sonnet-4-5": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-sonnet-4-6": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-sonnet-5": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "claude-sonnet-latest": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "extendedThinking": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "apikey",
+            "extendedThinking",
+            "modelSource"
+          ]
+        },
+        "custom": {
+          "apikey": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "model": {},
+          "modelSource": {
+            "ui:widget": "hidden"
+          },
+          "modelTotalTokens": {},
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "model",
+            "modelTotalTokens",
+            "apikey",
+            "modelSource"
+          ]
+        },
+        "profile": {
+          "ui:enumNames": [
+            "Anthropic: Claude 3 Haiku",
+            "Anthropic: Claude Fable 5",
+            "Anthropic: Claude Fable Latest",
+            "Claude Haiku 4.5",
+            "Anthropic Claude Haiku Latest",
+            "Anthropic: Claude Opus 4",
+            "Anthropic: Claude Opus 4.1",
+            "Claude Opus 4.5",
+            "Claude Opus 4.6",
+            "Anthropic: Claude Opus 4.7",
+            "Anthropic: Claude Opus 4.7 (Fast)",
+            "Anthropic: Claude Opus 4.8",
+            "Anthropic: Claude Opus 4.8 (Fast)",
+            "Claude Opus 5",
+            "Claude Opus 5 (Fast)",
+            "Anthropic: Claude Opus Latest",
+            "Anthropic: Claude Sonnet 4",
+            "Claude Sonnet 4.5",
+            "Claude Sonnet 4.6",
+            "Anthropic: Claude Sonnet 5",
+            "Anthropic Claude Sonnet Latest",
+            null
+          ]
+        },
+        "ui:order": [
+          "profile",
+          "custom",
+          "claude-sonnet-4-6",
+          "claude-opus-4-6",
+          "claude-haiku-4-5",
+          "claude-sonnet-4-5",
+          "claude-opus-4-5",
+          "claude-opus-4-7",
+          "claude-3-haiku",
+          "claude-fable-5",
+          "claude-fable-latest",
+          "claude-haiku-latest",
+          "claude-opus-4",
+          "claude-opus-4-1",
+          "claude-opus-4-7-fast",
+          "claude-opus-4-8",
+          "claude-opus-4-8-fast",
+          "claude-opus-latest",
+          "claude-sonnet-4",
+          "claude-sonnet-5",
+          "claude-sonnet-latest",
+          "claude-opus-5",
+          "claude-opus-5-fast"
+        ]
+      }
+    },
+    "plans": null,
+    "prefix": "llm",
+    "protocol": "llm_anthropic://",
+    "tile": [
+      "Model: ${parameters.llm_anthropic.profile}"
+    ],
+    "title": "Anthropic"
+  },
+  "tool_cognee": {
+    "actions": 0,
+    "capabilities": 3072,
+    "classType": [
+      "tool"
+    ],
+    "description": "Persistent semantic memory backed by a Cognee server, exposed as three agent tools. \nRemember plain text, recall memory results while requesting references, and check background processing. The knowledge graph captures semantic relationships; it is not an AST, import graph, or call graph.",
+    "documentation": "https://docs.cognee.ai",
+    "lanes": {},
+    "Pipe": {
+      "schema": {
+        "properties": {
+          "allow_dataset_override": {
+            "default": false,
+            "description": "Allow agents to select a dataset per call. Leave off when several agents should share one operator-controlled memory scope.",
+            "title": "Allow dataset override",
+            "type": "boolean"
+          },
+          "api_key": {
+            "default": "",
+            "description": "Cognee API key sent as the <code>X-Api-Key</code> header. Falls back to <code>COGNEE_API_KEY</code>. Self-hosted servers with access control disabled can leave this blank.",
+            "title": "API Key",
+            "type": "string"
+          },
+          "base_url": {
+            "default": "http://localhost:8000",
+            "description": "Base URL of the Cognee server. Self-hosted Cognee defaults to <b>http://localhost:8000</b>. For Cognee Cloud, use the instance URL from <a href='https://platform.cognee.ai' target='_blank'>platform.cognee.ai</a>.",
+            "title": "Server URL",
+            "type": "string"
+          },
+          "dataset": {
+            "default": "main",
+            "description": "Default Cognee dataset used by all agent tools. Tool calls stay in this operator-controlled scope unless per-call overrides are enabled.",
+            "title": "Dataset",
+            "type": "string"
+          },
+          "request_timeout": {
+            "default": 120,
+            "description": "Maximum seconds to wait for one Cognee request.",
+            "maximum": 600,
+            "minimum": 5,
+            "title": "Request timeout (s)",
+            "type": "integer"
+          },
+          "search_type": {
+            "default": "GRAPH_COMPLETION_DECOMPOSITION",
+            "description": "How recall retrieves memory. Graph completion decomposition is the semantic default; the agent can override it per call.",
+            "enum": [
+              "GRAPH_COMPLETION_DECOMPOSITION",
+              "GRAPH_COMPLETION",
+              "RAG_COMPLETION",
+              "CHUNKS",
+              "SUMMARIES",
+              "TEMPORAL",
+              "FEELING_LUCKY"
+            ],
+            "title": "Default recall strategy",
+            "type": "string"
+          },
+          "top_k": {
+            "default": 15,
+            "description": "Maximum number of results recall retrieves per query.",
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Recall results (top_k)",
+            "type": "integer"
+          },
+          "type": {
+            "default": "tool_cognee",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "base_url",
+          "dataset",
+          "allow_dataset_override",
+          "search_type",
+          "top_k",
+          "request_timeout"
+        ],
+        "title": "Cognee",
+        "type": "object"
+      },
+      "ui": {
+        "allow_dataset_override": {},
+        "api_key": {
+          "ui:secure": true,
+          "ui:widget": "ApiKeyWidget"
+        },
+        "base_url": {},
+        "dataset": {},
+        "request_timeout": {},
+        "search_type": {
+          "ui:enumNames": [
+            "Graph completion decomposition (default)",
+            "Graph completion",
+            "RAG completion",
+            "Chunks",
+            "Summaries",
+            "Temporal",
+            "Feeling lucky"
+          ]
+        },
+        "top_k": {},
+        "type": {
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "ui:order": [
+          "type",
+          "base_url",
+          "api_key",
+          "dataset",
+          "allow_dataset_override",
+          "search_type",
+          "top_k",
+          "request_timeout"
+        ]
+      }
+    },
+    "plans": null,
+    "prefix": "cognee",
+    "protocol": "tool_cognee://",
+    "tile": [
+      "Dataset: ${parameters.cognee.dataset}"
+    ],
+    "title": "Cognee"
+  },
+  "db_hydradb": {
+    "actions": 0,
+    "capabilities": 1024,
+    "classType": [
+      "graph",
+      "database",
+      "tool"
+    ],
+    "description": "A database/tool node for HydraDB, a managed graph + memory store. \nExposes agent-callable tools to store text as memories (with automatic knowledge-graph \nextraction) and recall graph-enriched context by natural-language query. Retrieval is \nHydraDB's native server-side search - no embeddings or query language required.",
+    "documentation": "https://docs.rocketride.org",
+    "lanes": {},
+    "Pipe": {
+      "schema": {
+        "dependencies": {
+          "profile": {
+            "oneOf": [
+              {
+                "properties": {
+                  "default": {
+                    "object": "default",
+                    "properties": {
+                      "api_key": {
+                        "description": "HydraDB API key. Falls back to the HYDRA_DB_API_KEY environment variable if left blank.",
+                        "title": "API Key",
+                        "type": "string"
+                      },
+                      "collection": {
+                        "default": "default",
+                        "description": "Collection scope within the database (per-user/workspace partition for memories).",
+                        "title": "Collection",
+                        "type": "string"
+                      },
+                      "database": {
+                        "description": "HydraDB database - the space that stores your context. Create one in the HydraDB dashboard.",
+                        "title": "Database",
+                        "type": "string"
+                      },
+                      "max_results": {
+                        "default": 10,
+                        "description": "Default maximum number of results returned by recall_memory.",
+                        "maximum": 100,
+                        "minimum": 1,
+                        "title": "Max results",
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "api_key",
+                      "database",
+                      "collection",
+                      "max_results"
+                    ],
+                    "type": "object"
+                  },
+                  "profile": {
+                    "enum": [
+                      "default"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "properties": {
+          "profile": {
+            "default": "default",
+            "enum": [
+              "default"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile"
+        ],
+        "title": "HydraDB",
+        "type": "object"
+      },
+      "ui": {
+        "default": {
+          "api_key": {
+            "ui:secure": true,
+            "ui:widget": "ApiKeyWidget"
+          },
+          "collection": {},
+          "database": {},
+          "max_results": {},
+          "ui:options": {
+            "label": false,
+            "nonNestedDisplay": true
+          },
+          "ui:order": [
+            "api_key",
+            "database",
+            "collection",
+            "max_results"
+          ]
+        },
+        "profile": {
+          "ui:enumNames": [
+            "Default"
+          ],
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "ui:order": [
+          "profile",
+          "default"
+        ]
+      }
+    },
+    "plans": null,
+    "prefix": "hydradb",
+    "protocol": "db_hydradb://",
+    "title": "HydraDB"
+  },
+  "db_hotdata": {
+    "actions": 0,
+    "capabilities": 1024,
+    "classType": [
+      "database",
+      "tool"
+    ],
+    "description": "Creates one ephemeral Hotdata database for each pipeline run.\nLets agents inspect its live schema and execute read-only SQL before the database is destroyed at teardown.",
+    "documentation": "https://docs.rocketride.org",
+    "invoke": {
+      "llm": {
+        "description": "LLM used to generate SQL from natural language",
+        "min": 1
+      }
+    },
+    "lanes": {
+      "answers": [],
+      "questions": [
+        "table",
+        "text",
+        "answers"
+      ]
+    },
+    "Pipe": {
+      "schema": {
+        "properties": {
+          "allow_destructive_load": {
+            "default": false,
+            "description": "Permit load_data to use replace, update or delete modes, which overwrite or remove existing rows. Off by default: load_data is append/upsert only, so an agent cannot destroy data another pipeline step loaded.",
+            "title": "Allow destructive loads",
+            "type": "boolean"
+          },
+          "allow_execute": {
+            "default": false,
+            "description": "Permit trusted callers to submit raw read-only SQL.",
+            "title": "Allow direct query execution",
+            "type": "boolean"
+          },
+          "api_url": {
+            "default": "",
+            "description": "Hotdata API base URL. Leave empty for https://api.hotdata.dev.",
+            "title": "API URL",
+            "type": "string"
+          },
+          "apikey": {
+            "default": "",
+            "description": "Hotdata API key.",
+            "title": "API Key",
+            "type": "string"
+          },
+          "async_after_ms": {
+            "default": 5000,
+            "description": "Wait this long before a query continues as an asynchronous job.",
+            "maximum": 60000,
+            "minimum": 0,
+            "title": "Run asynchronously after (milliseconds)",
+            "type": "integer"
+          },
+          "db_description": {
+            "default": "",
+            "description": "Schema and domain hints for natural-language SQL generation.",
+            "title": "Database description",
+            "type": "string"
+          },
+          "job_timeout_secs": {
+            "default": 300,
+            "description": "Maximum time to wait for an asynchronous query.",
+            "maximum": 3600,
+            "minimum": 10,
+            "title": "Job timeout (seconds)",
+            "type": "integer"
+          },
+          "max_attempts": {
+            "default": 3,
+            "description": "Maximum SQL-generation attempts.",
+            "maximum": 10,
+            "minimum": 1,
+            "title": "Maximum attempts",
+            "type": "integer"
+          },
+          "max_execute_rows": {
+            "default": 25000,
+            "description": "Maximum rows returned by raw SQL execution.",
+            "maximum": 25000,
+            "minimum": 1,
+            "title": "Maximum execute rows",
+            "type": "integer"
+          },
+          "table": {
+            "default": "pipeline_data",
+            "description": "Table that rows arriving on the answers lane are loaded into. Created on first use.",
+            "title": "Table",
+            "type": "string"
+          },
+          "ttl": {
+            "default": "24h",
+            "description": "Crash-safety expiry for the ephemeral database.",
+            "enum": [
+              "1h",
+              "24h",
+              "7d"
+            ],
+            "title": "Database lifetime",
+            "type": "string"
+          },
+          "type": {
+            "default": "db_hotdata",
+            "type": "string"
+          },
+          "workspace_id": {
+            "default": "",
+            "description": "Hotdata workspace ID.",
+            "title": "Workspace ID",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "apikey",
+          "workspace_id",
+          "ttl",
+          "table",
+          "max_attempts",
+          "max_execute_rows",
+          "allow_execute",
+          "allow_destructive_load",
+          "job_timeout_secs",
+          "async_after_ms"
+        ],
+        "title": "Hotdata",
+        "type": "object"
+      },
+      "ui": {
+        "allow_destructive_load": {},
+        "allow_execute": {},
+        "api_url": {},
+        "apikey": {
+          "ui:secure": true,
+          "ui:widget": "ApiKeyWidget"
+        },
+        "async_after_ms": {},
+        "db_description": {},
+        "job_timeout_secs": {},
+        "max_attempts": {},
+        "max_execute_rows": {},
+        "table": {},
+        "ttl": {
+          "ui:enumNames": [
+            "1 hour",
+            "24 hours",
+            "7 days"
+          ]
+        },
+        "type": {
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "ui:order": [
+          "type",
+          "apikey",
+          "workspace_id",
+          "api_url",
+          "ttl",
+          "table",
+          "db_description",
+          "max_attempts",
+          "max_execute_rows",
+          "allow_execute",
+          "allow_destructive_load",
+          "job_timeout_secs",
+          "async_after_ms"
+        ],
+        "workspace_id": {}
+      }
+    },
+    "plans": null,
+    "prefix": "hotdata",
+    "protocol": "db_hotdata://",
+    "tile": [],
+    "title": "Hotdata"
+  },
+  "response_json": {
+    "actions": 0,
+    "capabilities": 2048,
+    "classType": [
+      "infrastructure"
+    ],
+    "description": "A component that returns structured JSON data back to the requesting client. It handles \nthe response phase of the HTTP request-response cycle by returning the results as a JSON \nobject. This component ensures that data is transmitted efficiently and clearly to \nthe client, providing a standardized format for the response.",
+    "documentation": "https://docs.rocketride.org",
+    "lanes": {
+      "json": []
+    },
+    "Pipe": {
+      "schema": {
+        "properties": {
+          "laneName": {
+            "default": "json",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Identifier key within result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "laneName"
+        ],
+        "title": "Return JSON",
+        "type": "object"
+      },
+      "ui": {
+        "laneName": {},
+        "ui:order": [
+          "laneName"
+        ]
+      }
+    },
+    "plans": null,
+    "prefix": "response",
+    "protocol": "response_json://",
+    "tile": [],
+    "title": "Return JSON"
+  },
+  "chat": {
+    "actions": 0,
+    "capabilities": 2560,
+    "classType": [
+      "source"
+    ],
+    "description": "A user interface component that provides a web-based chat experience. It \ncreates its own HTTP endpoint, configured by host and port, to serve a simple \nchat UI. Users can interact with the interface to submit questions, which \nare routed through the attached pipeline for processing. Designed for easy \nintegration, it enables the addition of conversational capabilities to any \npipeline workflow.",
+    "documentation": "https://docs.rocketride.org",
+    "lanes": {
+      "_source": [
+        "questions"
+      ]
+    },
+    "Pipe": {
+      "schema": {
+        "properties": {
+          "hideForm": {
+            "default": true,
+            "type": "boolean"
+          },
+          "mode": {
+            "default": "Source",
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "type": {
+            "default": "chat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hideForm",
+          "type",
+          "mode"
+        ],
+        "title": "Chat",
+        "type": "object"
+      },
+      "ui": {
+        "hideForm": {
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "mode": {
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "parameters": {
+          "ui:options": {
+            "label": false
+          }
+        },
+        "type": {
+          "ui:options": {
+            "label": false
+          },
+          "ui:widget": "hidden"
+        },
+        "ui:order": [
+          "hideForm",
+          "type",
+          "mode",
+          "parameters"
+        ]
+      }
+    },
+    "plans": null,
+    "prefix": "Chat",
+    "protocol": "chat://",
+    "tile": [],
+    "title": "Chat"
+  }
+}

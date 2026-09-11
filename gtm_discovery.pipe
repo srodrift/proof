@@ -1,0 +1,34 @@
+{
+  "name": "gtm_discovery",
+  "description": "Scores go-to-market copy variants for a product against a simulated ICP panel. Returns JSON.",
+  "version": 1,
+  "source": "in",
+  "components": [
+    {
+      "id": "in",
+      "provider": "webhook",
+      "name": "Product + channel input",
+      "description": "Receives {product, icp, channel, variants[]} as JSON from the Proof server.",
+      "config": {}
+    },
+    {
+      "id": "score",
+      "provider": "ai_chat",
+      "name": "ICP panel scoring",
+      "description": "Scores each copy variant 0-100 as three distinct ICP personas, returns JSON only.",
+      "config": {
+        "model": "claude-sonnet-4-6",
+        "apiKey": "${ROCKETRIDE_ANTHROPIC_KEY}",
+        "system": "You are three distinct personas from the stated ICP. Score each copy variant 0-100 on whether that persona would click. Weight failure-mode specificity above outcome claims. Return ONLY JSON: {\"scores\":[{\"copy\":string,\"score\":number,\"reason\":string}]}. No prose, no code fences."
+      },
+      "input": [{ "lane": "text", "from": "in" }]
+    },
+    {
+      "id": "out",
+      "provider": "response",
+      "name": "Scored variants",
+      "config": { "laneName": "text" },
+      "input": [{ "lane": "text", "from": "score" }]
+    }
+  ]
+}
